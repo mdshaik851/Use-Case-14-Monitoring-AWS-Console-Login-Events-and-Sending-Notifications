@@ -34,6 +34,12 @@ module "cloudtrail" {
   s3_bucket_name            = var.s3_bucket_name
   cloudwatch_logs_group_arn = module.cloudwatch_logs.log_group_arn
   cloudwatch_logs_role_arn  = module.iam_role.cloudtrail_logs_role_arm
+  
+depends_on = [
+    module.cloudwatch_logs,
+    module.iam_role
+  ]
+
 }
 
 module "cloudwatch_alarm" {

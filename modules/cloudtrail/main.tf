@@ -7,10 +7,5 @@ resource "aws_cloudtrail" "main" {
   cloud_watch_logs_group_arn    = var.cloudwatch_logs_group_arn
   cloud_watch_logs_role_arn     = var.cloudwatch_logs_role_arn
 
-depends_on = [
-  var.cloudwatch_logs_group_arn,
-  var.cloudwatch_logs_role_arn
-]
-
 
 }
