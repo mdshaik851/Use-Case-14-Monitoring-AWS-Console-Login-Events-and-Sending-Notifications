@@ -2,6 +2,11 @@ provider "aws" {
   region = "us-west-1"
 }
 
+module "S3" {
+  source           = "./modules/s3"
+  s3_bucket_name   = "uc-14-console-activity-login-details"
+  
+}
 
 module "sns" {
   source        = "./modules/sns"
@@ -15,8 +20,8 @@ module "cloudwatch" {
 
 module "cloudtrail" {
   source                = "./modules/cloudtrail"
-  s3_bucket_name        = "uc-14-login-console-activity"
+  s3_bucket_name        = module.S3.cloudtrail_s3_bucket
   cloudwatch_log_group_arn  = module.cloudwatch.cloudwatch_log_group_arn
-  depends_on_cloudwatch_log_group = module.cloudwatch.depends_on_cloudwatch_log_group
+  depends_on_cloudwatch_log_group = module.cloudwatch.log_group_arn
   depends_on_s3_bucket_object     = module.S3.depends_on_s3_bucket_object
 }
