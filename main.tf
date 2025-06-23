@@ -1,47 +1,52 @@
-terraform {
-  required_version = ">= 1.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 provider "aws" {
-  region = "us-west-1"  # Updated to us-west-1
+  region = "us-east-1"
 }
 
-module "iam_role" {
-  source = "./modules/iam"
+module "sns" {
+  source        = "./modules/sns"
+  email_address = "admin@example.com"
 }
 
-module "sns_notification" {
-  source        = "./modules/sns_notification"
-  topic_name    = var.topic_name
-  email_address = var.email_address
-}
-
-module "cloudwatch_logs" {
-  source         = "./modules/cloudwatch_log"
-  log_group_name = "/aws/cloudtrail/login-events"
+module "cloudwatch" {
+  source        = "./modules/cloudwatch"
+  sns_topic_arn = module.sns.login_topic_arn
 }
 
 module "cloudtrail" {
-  source                    = "./modules/cloudtrail"
-  trail_name                = var.trail_name
-  s3_bucket_name            = var.s3_bucket_name
-  cloudwatch_logs_group_arn = "${module.cloudwatch_logs.log_group_arn}:*"  # Ensure ":*" suffix
-  cloudwatch_logs_role_arn  = module.iam_role.cloudtrail_logs_role_arn
-
-  depends_on = [
-    module.cloudwatch_logs,
-    module.iam_role,
-    aws_iam_role_policy.cloudtrail_logs_policy  # Explicit policy dependency
-  ]
+  source             = "./modules/cloudtrail"
+  s3_bucket_name     = "cloudtrail-console-login-bucket"
+  cloudwatch_role_arn = aws_iam_role.cloudtrail_cw_role.arn
+  log_group_arn      = module.cloudwatch.login_log_group_arn
 }
 
-module "cloudwatch_alarm" {
-  source        = "./modules/cloudwatch_alarm"
-  sns_topic_arn = module.sns_notification.sns_topic_arn
+resource "aws_iam_role" "cloudtrail_cw_role" {
+  name = "CloudTrailCloudWatchLogsRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "cloudtrail.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "cloudtrail_policy" {
+  name = "CloudTrailCWPolicy"
+  role = aws_iam_role.cloudtrail_cw_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "logs:PutLogEvents",
+        "logs:CreateLogStream",
+        "logs:CreateLogGroup",
+        "logs:DescribeLogStreams"
+      ],
+      Resource = "*"
+    }]
+  })
 }
