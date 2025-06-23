@@ -3,5 +3,5 @@ output "sns_topic_arn" {
 }
 
 output "cloudwatch_log_group" {
-  value = module.cloudwatch.login_log_group_arn
+  value = module.cloudwatch.log_group_arn
 }

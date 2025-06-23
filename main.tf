@@ -16,7 +16,7 @@ module "cloudtrail" {
   source             = "./modules/cloudtrail"
   s3_bucket_name     = "cloudtrail-console-login-bucket"
   cloudwatch_role_arn = aws_iam_role.cloudtrail_cw_role.arn
-  log_group_arn      = module.cloudwatch.login_log_group_arn
+  log_group_arn = module.cloudwatch.log_group_arn
 }
 
 resource "aws_iam_role" "cloudtrail_cw_role" {
