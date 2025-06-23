@@ -49,6 +49,8 @@ resource "aws_cloudtrail" "console_trail" {
 
   depends_on = [
     aws_s3_bucket.cloudtrail_bucket,
-    aws_s3_bucket_policy.cloudtrail_policy
+    aws_s3_bucket_policy.cloudtrail_policy,
+    var.cloudwatch_role_dependency,     # <-- this should come from parent module as a dummy reference
+    var.cloudwatch_log_group_dependency # <-- same as above
   ]
 }
