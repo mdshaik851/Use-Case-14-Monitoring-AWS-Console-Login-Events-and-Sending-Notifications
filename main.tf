@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-1" # Mumbai region
+  region = "us-west-1"
 }
 
 module "iam_role" {

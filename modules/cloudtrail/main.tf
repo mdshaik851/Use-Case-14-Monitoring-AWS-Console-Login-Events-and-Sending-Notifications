@@ -6,4 +6,10 @@ resource "aws_cloudtrail" "main" {
   enable_log_file_validation    = true
   cloud_watch_logs_group_arn    = var.cloudwatch_logs_group_arn
   cloud_watch_logs_role_arn     = var.cloudwatch_logs_role_arn
+
+  depends_on = [
+  aws_cloudwatch_log_group.cloudtrail_log_group,
+  aws_iam_role.cloudtrail_logs_role
+]
+
 }
