@@ -13,6 +13,9 @@ provider "aws" {
   region = "us-west-1" # Mumbai region
 }
 
+module "iam_role" {
+  source       = "./modules/iam"
+}
 
 module "sns_notification" {
   source       = "./modules/sns_notification"
@@ -30,7 +33,7 @@ module "cloudtrail" {
   trail_name                = var.trail_name
   s3_bucket_name            = var.s3_bucket_name
   cloudwatch_logs_group_arn = module.cloudwatch_logs.log_group_arn
-  cloudwatch_logs_role_arn  = var.cloudwatch_logs_role_arn
+  cloudwatch_logs_role_arn  = module.iam_role.cloudtrail_logs_role_arm
 }
 
 module "cloudwatch_alarm" {
