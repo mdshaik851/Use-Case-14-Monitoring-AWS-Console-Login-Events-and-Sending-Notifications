@@ -4,7 +4,7 @@ provider "aws" {
 
 module "sns" {
   source        = "./modules/sns"
-  email_address = "admin@example.com"
+  email_address = "md939255shaik@gmail.com"
 }
 
 module "cloudwatch" {
