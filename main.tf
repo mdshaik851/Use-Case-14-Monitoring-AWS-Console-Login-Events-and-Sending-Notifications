@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-1" # Correct region for Mumbai
+  region = "us-west-1"  # Updated to us-west-1
 }
 
 module "iam_role" {
@@ -31,12 +31,13 @@ module "cloudtrail" {
   source                    = "./modules/cloudtrail"
   trail_name                = var.trail_name
   s3_bucket_name            = var.s3_bucket_name
-  cloudwatch_logs_group_arn = module.cloudwatch_logs.log_group_arn
+  cloudwatch_logs_group_arn = "${module.cloudwatch_logs.log_group_arn}:*"  # Ensure ":*" suffix
   cloudwatch_logs_role_arn  = module.iam_role.cloudtrail_logs_role_arn
 
   depends_on = [
     module.cloudwatch_logs,
-    module.iam_role
+    module.iam_role,
+    aws_iam_role_policy.cloudtrail_logs_policy  # Explicit policy dependency
   ]
 }
 

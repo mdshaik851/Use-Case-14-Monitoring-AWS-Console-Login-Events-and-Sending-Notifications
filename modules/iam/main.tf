@@ -28,7 +28,7 @@ resource "aws_iam_role_policy" "cloudtrail_logs_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        Resource = "arn:aws:logs:*:*:log-group:/aws/cloudtrail/*"
+        Resource = "arn:aws:logs:us-west-1:994466158061:log-group:/aws/cloudtrail/*:*"  # Updated region
       }
     ]
   })
