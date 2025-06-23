@@ -1,3 +1,19 @@
+# Configure the AWS Provider
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-1" # Mumbai region
+}
+
+
 module "sns_notification" {
   source       = "./modules/sns_notification"
   topic_name   = var.topic_name
