@@ -21,7 +21,7 @@ module "sns_notification" {
 }
 
 module "cloudwatch_logs" {
-  source         = "./modules/cloudwatch_logs"
+  source         = "./modules/cloudwatch_log"
   log_group_name = "/aws/cloudtrail/login-events"
 }
 
