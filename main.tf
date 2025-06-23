@@ -1,4 +1,3 @@
-# Configure the AWS Provider
 terraform {
   required_version = ">= 1.0"
   required_providers {
@@ -10,16 +9,16 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-1"
+  region = "ap-south-1" # Correct region for Mumbai
 }
 
 module "iam_role" {
-  source       = "./modules/iam"
+  source = "./modules/iam"
 }
 
 module "sns_notification" {
-  source       = "./modules/sns_notification"
-  topic_name   = var.topic_name
+  source        = "./modules/sns_notification"
+  topic_name    = var.topic_name
   email_address = var.email_address
 }
 
@@ -33,13 +32,12 @@ module "cloudtrail" {
   trail_name                = var.trail_name
   s3_bucket_name            = var.s3_bucket_name
   cloudwatch_logs_group_arn = module.cloudwatch_logs.log_group_arn
-  cloudwatch_logs_role_arn  = module.iam_role.cloudtrail_logs_role_arm
-  
-depends_on = [
-    module.cloudwatch_logs,
-    module.iam_role
-  ]
+  cloudwatch_logs_role_arn  = module.iam_role.cloudtrail_logs_role_arn
 
+  depends_on = [
+    module.cloudwatch_logs,
+    module.iam_role
+  ]
 }
 
 module "cloudwatch_alarm" {
