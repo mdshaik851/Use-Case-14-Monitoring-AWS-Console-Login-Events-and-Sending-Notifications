@@ -39,17 +39,18 @@ resource "aws_iam_role" "cloudtrail_cw_role" {
 resource "aws_iam_role_policy" "cloudtrail_policy" {
   name = "CloudTrailCWPolicy"
   role = aws_iam_role.cloudtrail_cw_role.id
+
   policy = jsonencode({
     Version = "2012-10-17",
-    Statement = [{
-      Effect = "Allow",
-      Action = [
-        "logs:PutLogEvents",
-        "logs:CreateLogStream",
-        "logs:CreateLogGroup",
-        "logs:DescribeLogStreams"
-      ],
-      Resource = "*"
-    }]
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "${module.cloudwatch.log_group_arn}:*"
+      }
+    ]
   })
 }
