@@ -14,43 +14,9 @@ module "cloudwatch" {
 }
 
 module "cloudtrail" {
-  source             = "./modules/cloudtrail"
-  s3_bucket_name     = "cloudtrail-console-login-bucket"
-  cloudwatch_role_arn = aws_iam_role.cloudtrail_cw_role.arn
-  log_group_arn = module.cloudwatch.log_group_arn
-  cloudwatch_role_dependency        = aws_iam_role.cloudtrail_cw_role.arn
-  cloudwatch_log_group_dependency   = module.cloudwatch.log_group_arn
-}
-
-resource "aws_iam_role" "cloudtrail_cw_role" {
-  name = "CloudTrailCloudWatchLogsRole"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect = "Allow",
-      Principal = {
-        Service = "cloudtrail.amazonaws.com"
-      },
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "cloudtrail_policy" {
-  name = "CloudTrailCWPolicy"
-  role = aws_iam_role.cloudtrail_cw_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        Resource = "${module.cloudwatch.log_group_arn}:*"
-      }
-    ]
-  })
+  source                = "./modules/cloudtrail"
+  s3_bucket_name        = "uc-14-login-console-activity"
+  cloudwatch_log_group_arn  = module.cloudwatch.cloudwatch_log_group_arn
+  depends_on_cloudwatch_log_group = module.cloudwatch.depends_on_cloudwatch_log_group
+  depends_on_s3_bucket_object     = module.S3.depends_on_s3_bucket_object
 }
