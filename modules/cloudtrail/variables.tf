@@ -1,4 +1,13 @@
-variable "trail_name" {}
-variable "s3_bucket_name" {}
-variable "cloudwatch_logs_group_arn" {}
-variable "cloudwatch_logs_role_arn" {}
+variable "s3_bucket_name" {
+  description = "S3 bucket name to store CloudTrail logs"
+}
+
+variable "cloudwatch_log_group_arn" {
+  description = "The ARN of the CloudWatch Log Group"
+}
+
+variable "depends_on_cloudwatch_log_group" {
+}
+
+variable "depends_on_s3_bucket_object" {
+}

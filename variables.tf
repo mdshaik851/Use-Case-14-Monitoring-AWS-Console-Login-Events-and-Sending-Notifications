@@ -1,29 +1,35 @@
-variable "trail_name" {
-  default     = "aws-login-trail"
-  type        = string
-  description = "Name of the CloudTrail trail"
-}
 
-variable "s3_bucket_name" {
-  default     = "uc-14-consolelogintrail"
-  type        = string
-  description = "S3 bucket name to store CloudTrail logs"
-}
-
-variable "cloudwatch_logs_role_arn" {
-  default     = "arn:aws:iam::123456789012:role/CloudTrailCWLogsRole"
-  type        = string
-  description = "IAM role ARN for CloudTrail to send logs to CloudWatch"
-}
-
-variable "topic_name" {
-  default     = "aws-console-login-topic"
-  type        = string
-  description = "SNS topic name for login notifications"
-}
-
-variable "email_address" {
+variable "notification_email_addresses" {
+  description = "List of email addresses to receive notifications"
   default     = "mohammedabdul.shaik@hcltech.com"
+}
+
+variable "sns_topic_name" {
+  description = "Name of the SNS topic"
   type        = string
-  description = "Email address to receive login notifications"
+  default     = "ConsoleLoginAlerts"
+}
+
+variable "alarm_name" {
+  description = "Name of the CloudWatch alarm"
+  type        = string
+  default     = "ConsoleLoginAlarm"
+}
+
+variable "metric_name" {
+  description = "Name of the CloudWatch metric"
+  type        = string
+  default     = "ConsoleLoginEvents"
+}
+
+variable "metric_namespace" {
+  description = "Namespace for the CloudWatch metric"
+  type        = string
+  default     = "ConsoleLogin"
+}
+
+variable "filter_pattern" {
+  description = "Filter pattern for CloudWatch Logs metric filter"
+  type        = string
+  default     = "{ ($.eventName = \"ConsoleLogin\") && ($.responseElements.ConsoleLogin = \"Success\") }"
 }

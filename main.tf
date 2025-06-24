@@ -1,39 +1,27 @@
-# Configure the AWS Provider
-terraform {
-  required_version = ">= 1.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 provider "aws" {
-  region = "us-west-1" # Mumbai region
+  region = "us-west-1"
 }
 
-
-module "sns_notification" {
-  source       = "./modules/sns_notification"
-  topic_name   = var.topic_name
-  email_address = var.email_address
+module "S3" {
+  source           = "./modules/s3-bucket"
+  s3_bucket_name   = "uc-14-console-activity-login-details-1"
+  
 }
 
-module "cloudwatch_logs" {
-  source         = "./modules/cloudwatch_log"
-  log_group_name = "/aws/cloudtrail/login-events"
+module "sns" {
+  source        = "./modules/sns"
+  email_address = "md939255shaik@gmail.com"
+}
+
+module "cloudwatch" {
+  source        = "./modules/cloudwatch"
+  sns_topic_arn = module.sns.login_topic_arn
 }
 
 module "cloudtrail" {
-  source                    = "./modules/cloudtrail"
-  trail_name                = var.trail_name
-  s3_bucket_name            = var.s3_bucket_name
-  cloudwatch_logs_group_arn = module.cloudwatch_logs.log_group_arn
-  cloudwatch_logs_role_arn  = var.cloudwatch_logs_role_arn
-}
-
-module "cloudwatch_alarm" {
-  source        = "./modules/cloudwatch_alarm"
-  sns_topic_arn = module.sns_notification.sns_topic_arn
+  source                = "./modules/cloudtrail"
+  s3_bucket_name        = module.S3.cloudtrail_s3_bucket
+  cloudwatch_log_group_arn  = module.cloudwatch.log_group_arn
+  depends_on_cloudwatch_log_group = module.cloudwatch.log_group_arn
+  depends_on_s3_bucket_object     = module.S3.depends_on_s3_bucket_object
 }
