@@ -1,12 +1,7 @@
-variable "cloudtrail_bucket_name" {
-  description = "Name of the S3 bucket for CloudTrail logs"
-  type        = string
-  default     = "uc-14-log-console-activity"
-}
 
 variable "notification_email_addresses" {
   description = "List of email addresses to receive notifications"
-  default     = "md939255shaik@gmail.com"
+  default     = "mohammedabdul.shaik@hcltech.com"
 }
 
 variable "sns_topic_name" {

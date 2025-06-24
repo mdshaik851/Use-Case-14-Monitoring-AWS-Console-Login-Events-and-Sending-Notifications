@@ -4,7 +4,7 @@ provider "aws" {
 
 module "S3" {
   source           = "./modules/s3-bucket"
-  s3_bucket_name   = "uc-14-console-activity-login-details"
+  s3_bucket_name   = "uc-14-console-activity-login-details-1"
   
 }
 
